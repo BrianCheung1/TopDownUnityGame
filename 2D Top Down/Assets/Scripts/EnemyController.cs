@@ -8,20 +8,33 @@ public class EnemyController : MonoBehaviour
     enum State { Walk, Hit, Death, Daze}
     private State state;
 
+    //speed and direciton the enemy is moving in
     public float defaultSpeed = 1.0f;
     public float speed;
     public float changeTime = 6.0f;
     float directionTimer;
     int direction = 1;
 
+    //daze time when enemy gets hit
     public float dazeTime = 3.0f;
-    public float dazeTimer;
+    float dazeTimer;
     bool daze;
 
     public float health = 5;
 
     Rigidbody2D rb2D;
     Animator animator;
+
+    //Attack range for the enemy sword
+    public Transform attackPos;
+    public LayerMask whatIsPlayer;
+    public float attackRange;
+    public int damage;
+
+    //attack timer
+    public float attackTime = 1.0f;
+    float attackTimer;
+    public bool attacked;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +45,7 @@ public class EnemyController : MonoBehaviour
         //sets the timer to their respective times
         directionTimer = changeTime;
         dazeTimer = dazeTime;
+        attackTimer = attackTime;
 
         //Enemy starts in walking state
         state = State.Walk;
@@ -49,6 +63,7 @@ public class EnemyController : MonoBehaviour
                 //change direciton and set timer back to default
                 direction = -direction;
                 directionTimer = changeTime;
+                transform.Rotate(0, 180, 0);
             }
         }
 
@@ -69,6 +84,23 @@ public class EnemyController : MonoBehaviour
                 }
             }
         }
+
+        //if enemy has already attacked
+        if (attacked)
+        {
+            //timer for attack goes down
+            attackTimer -= Time.deltaTime;
+            if (attackTimer < 0)
+            {
+                //set attack to false, set enemy speed back to normal, and go back to walking animation
+                attacked = false;
+                speed = defaultSpeed;
+                animator.SetBool("idle", false);
+            }
+        }
+
+        //always look to attack player
+        AttackPlayer();
     }
 
     private void FixedUpdate()
@@ -125,6 +157,56 @@ public class EnemyController : MonoBehaviour
                 
             }
         }
+    }
+
+    //if player touchs enemy, they take damange
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+
+        if(player != null)
+        {
+            player.TakeDamage(-1);
+        }
+    }
+
+    //if player stays in enemy hitbox, they continue to take damage
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+
+        if(player !=null)
+        {
+            player.TakeDamage(-2);
+        }
+    }
+    
+    //sphere collider to attack the enemy is they get into range
+    private void AttackPlayer()
+    {
+        //sphere to detect player
+        Collider2D[] playerToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsPlayer);
+        for(int i = 0; i < playerToDamage.Length; i++)
+        {
+            //if enemy already attacked, dont do anything
+            if (attacked)
+                return;
+            //set attack to true, set timer back to default and remove hp from player
+            attacked = true;
+            attackTimer = attackTime;
+            playerToDamage[i].GetComponent<PlayerController>().TakeDamage(-damage);
+            animator.SetTrigger("Attack");
+            //set speed of enemy to 0 and change bool to idle after attacking
+            speed = 0;
+            animator.SetBool("idle", true);
+            directionTimer = changeTime;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPos.position, attackRange);
     }
 }
 

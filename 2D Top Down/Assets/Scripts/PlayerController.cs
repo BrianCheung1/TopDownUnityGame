@@ -17,12 +17,16 @@ public class PlayerController : MonoBehaviour
     float vertical;
 
     public int maxHealth = 100;
-    int currentHealth;
+    public int currentHealth;
     public float speed = 3.0f;
 
-    float reloadTime = 1.0f;
+    public float reloadTime = 1.0f;
     bool reloading;
     float reloaderTimer;
+
+    public float invincibleTime = 1.0f;
+    bool invincible;
+    float invincibleTimer;
     
 
     // Start is called before the first frame update
@@ -32,7 +36,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         reloaderTimer = reloadTime;
-
+        invincibleTimer = invincibleTime;
     }
 
     // Update is called once per frame
@@ -74,6 +78,16 @@ public class PlayerController : MonoBehaviour
             Attack();
         }
 
+        //invincible timer
+        if (invincible)
+        {
+            invincibleTimer -= Time.deltaTime;
+            if(invincibleTimer < 0)
+            {
+                invincible = false;
+            }
+        }
+
     }
 
     private void FixedUpdate()
@@ -101,24 +115,59 @@ public class PlayerController : MonoBehaviour
         //get the compoents of the projectile
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         //Depending on where the player is looking, rotate the arrow that comes out
-        if (lookDirection.x == 1)
+        if (horizontal == 1 && vertical == 0)
         {
             projectile.transform.Rotate(0, 0, 180);
         }
-        else if (lookDirection.y == 1)
+        else if (vertical == 1 && horizontal == 0)
         {
             projectile.transform.Rotate(0, 0, -90);
         }
-        else if (lookDirection.y == -1)
+        else if (vertical == -1 && horizontal == 0)
         {
             projectile.transform.Rotate(0, 0, 90);
         }
-
+        else if(horizontal >= -1 && horizontal < 0 && vertical <= 1 && vertical > 0)
+        {
+            projectile.transform.Rotate(0, 0, -45);
+        }
+        else if (horizontal <= 1 && horizontal > 0 && vertical <= 1 && vertical > 0)
+        {
+            projectile.transform.Rotate(0, 0, -135);
+        }
+        else if (horizontal >= -1 && horizontal < 0 && vertical >= -1 && vertical < 0)
+        {
+            projectile.transform.Rotate(0, 0, 45);
+        }
+        else if (horizontal <= 1 && horizontal > 0 && vertical >= -1 && vertical < 0)
+        {
+            projectile.transform.Rotate(0, 0, 135);
+        }
         //launch the projectiles in the direciton the player is looking in for 300 newton force
         projectile.Launch(lookDirection, 300);
         //when arrow is fired, set reload to true, and set reload timer to default
         reloading = true;
         reloaderTimer = reloadTime;
 
+    }
+
+    //changes players health depending on the damage they take
+    public void TakeDamage(int damage)
+    {
+        if(damage < 0)
+        {
+            if (invincible)
+                return;
+            //if they take damage set invincible to true
+            invincible = true;
+            //set the timer back to default
+            invincibleTimer = invincibleTime;
+            //play hit animation
+            animator.SetTrigger("Hit");
+        }
+
+        //set current health between 0, 100 depedning on the amount of damage taking
+        currentHealth = Mathf.Clamp(currentHealth + damage, 0, maxHealth);
+        
     }
 }
