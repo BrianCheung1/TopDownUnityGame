@@ -39,7 +39,7 @@ public class Projectile : MonoBehaviour
         EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
         if(enemy != null)
         {
-            enemy.TakeDamage(projectileDamage);
+            enemy.TakeDamage(-projectileDamage);
         }
         //destory the game objects after they collided
         Destroy(gameObject);

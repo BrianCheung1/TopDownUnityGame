@@ -8,24 +8,27 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     Rigidbody2D rb2D;
-    SpriteRenderer spriteRenderer;
     public GameObject projectilePrefab;
 
-
+    //direction the player is looking for
     Vector2 lookDirection = new Vector2(0, -1);
     float horizontal;
     float vertical;
 
+    //stats of the player
+    public HealthBar healthBar;
     public int maxHealth = 100;
     public int currentHealth;
     public float speed = 3.0f;
 
+    //reload time of the player
     public float reloadTime = 1.0f;
     bool reloading;
     float reloaderTimer;
 
+    //invincible time of the player
     public float invincibleTime = 1.0f;
-    bool invincible;
+    public bool invincible;
     float invincibleTimer;
     
 
@@ -34,7 +37,10 @@ public class PlayerController : MonoBehaviour
     {
         rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
         currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
+
         reloaderTimer = reloadTime;
         invincibleTimer = invincibleTime;
     }
@@ -115,34 +121,35 @@ public class PlayerController : MonoBehaviour
         //get the compoents of the projectile
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         //Depending on where the player is looking, rotate the arrow that comes out
-        if (horizontal == 1 && vertical == 0)
+        if (lookDirection.x == 1 && lookDirection.y == 0)
         {
             projectile.transform.Rotate(0, 0, 180);
         }
-        else if (vertical == 1 && horizontal == 0)
+        else if (lookDirection.y == 1 && lookDirection.x == 0)
         {
             projectile.transform.Rotate(0, 0, -90);
         }
-        else if (vertical == -1 && horizontal == 0)
+        else if (lookDirection.y == -1 && lookDirection.x == 0)
         {
             projectile.transform.Rotate(0, 0, 90);
         }
-        else if(horizontal >= -1 && horizontal < 0 && vertical <= 1 && vertical > 0)
+        else if(lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y <= 1 && lookDirection.y > 0)
         {
             projectile.transform.Rotate(0, 0, -45);
         }
-        else if (horizontal <= 1 && horizontal > 0 && vertical <= 1 && vertical > 0)
+        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y <= 1 && lookDirection.y > 0)
         {
             projectile.transform.Rotate(0, 0, -135);
         }
-        else if (horizontal >= -1 && horizontal < 0 && vertical >= -1 && vertical < 0)
+        else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y >= -1 && lookDirection.y < 0)
         {
             projectile.transform.Rotate(0, 0, 45);
         }
-        else if (horizontal <= 1 && horizontal > 0 && vertical >= -1 && vertical < 0)
+        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y >= -1 && lookDirection.y < 0)
         {
             projectile.transform.Rotate(0, 0, 135);
         }
+
         //launch the projectiles in the direciton the player is looking in for 300 newton force
         projectile.Launch(lookDirection, 300);
         //when arrow is fired, set reload to true, and set reload timer to default
@@ -168,6 +175,6 @@ public class PlayerController : MonoBehaviour
 
         //set current health between 0, 100 depedning on the amount of damage taking
         currentHealth = Mathf.Clamp(currentHealth + damage, 0, maxHealth);
-        
+        healthBar.setHealth(currentHealth);
     }
 }

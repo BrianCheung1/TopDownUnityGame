@@ -20,7 +20,9 @@ public class EnemyController : MonoBehaviour
     float dazeTimer;
     bool daze;
 
-    public float health = 5;
+    public HealthBar healthBar;
+    public int maxHealth = 10;
+    public int health;
 
     Rigidbody2D rb2D;
     Animator animator;
@@ -46,7 +48,9 @@ public class EnemyController : MonoBehaviour
         directionTimer = changeTime;
         dazeTimer = dazeTime;
         attackTimer = attackTime;
-
+        //health of enemy character
+        health = maxHealth;
+        healthBar.SetMaxHealth(health);
         //Enemy starts in walking state
         state = State.Walk;
     }
@@ -134,15 +138,27 @@ public class EnemyController : MonoBehaviour
             //play the hit animation
             animator.SetTrigger("Hit");
             //if health is greater than 0 than remove hp
-            if (health > 0)
+            if (damage < 0)
             {
-                health -= damage;
+               
+                //set daze to true when hit
+                daze = true;
+                //set timer to default
+                dazeTimer = dazeTime;
+                //play the hit animation
+                animator.SetTrigger("Hit");
             }
-            //if health is less than or equal to 0 play the death animation and set rigid body off.
+            
+            //set the health and healthbar ui
+            health = Mathf.Clamp(health + damage, 0, maxHealth);
+            healthBar.setHealth(health);
+
+            //if health is less than or equal to 0 play the death animation and set rigid body off
             if (health <= 0)
             {
                 animator.SetTrigger("Death");
                 rb2D.simulated = false;
+                healthBar.gameObject.SetActive(false);
             }
             state = State.Daze;
         }
