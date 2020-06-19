@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     Animator animator;
     Rigidbody2D rb2D;
+    SpriteRenderer spriteRenderer;
+    public GameObject projectilePrefab;
+
 
     Vector2 lookDirection = new Vector2(0, -1);
     float horizontal;
@@ -14,6 +18,10 @@ public class PlayerController : MonoBehaviour
     public int maxHealth = 100;
     int currentHealth;
     public float speed = 3.0f;
+
+    float reloadTime = 1.0f;
+    bool reloading;
+    float reloaderTimer;
     
 
     // Start is called before the first frame update
@@ -22,6 +30,8 @@ public class PlayerController : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
+
+        reloaderTimer = reloadTime;
     }
 
     // Update is called once per frame
@@ -46,6 +56,21 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Look X", lookDirection.x);
         animator.SetFloat("Look Y", lookDirection.y);
         animator.SetFloat("Speed", move.magnitude);
+
+        if (reloading)
+        {
+            reloaderTimer -= Time.deltaTime;
+            if (reloaderTimer < 0)
+            {
+                reloading = false;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            Attack();
+        }
+
     }
 
     private void FixedUpdate()
@@ -58,5 +83,37 @@ public class PlayerController : MonoBehaviour
 
         //move the player to those positions
         rb2D.MovePosition(position);
+    }
+
+    private void Attack()
+    {
+        if (reloading)
+            return;
+
+        //play the launch aniamtions
+        animator.SetTrigger("Attack");
+        //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
+        GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position, Quaternion.identity);
+        //get the compoents of the projectile
+        Projectile projectile = projectileObject.GetComponent<Projectile>();
+        Debug.Log(projectile.gameObject.name + "Created");
+
+        if (lookDirection.x == 1)
+        {
+            projectile.transform.Rotate(0, 0, 180);
+        }
+        else if (lookDirection.y == 1)
+        {
+            projectile.transform.Rotate(0, 0, -90);
+        }
+        else if (lookDirection.y == -1)
+        {
+            projectile.transform.Rotate(0, 0, 90);
+        }
+        //launch the projectiles in the direciton the player is looking in for 300 newton force
+        projectile.Launch(lookDirection, 300);
+        reloading = true;
+        reloaderTimer = reloadTime;
+
     }
 }

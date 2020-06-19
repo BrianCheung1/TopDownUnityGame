@@ -14,9 +14,9 @@ TagManager:
   - 
   - 
   - Background
-  - 
-  - 
-  - 
+  - Confiner
+  - Character
+  - Projectile
   - 
   - 
   - 
@@ -40,4 +40,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 3909630111
     locked: 0
