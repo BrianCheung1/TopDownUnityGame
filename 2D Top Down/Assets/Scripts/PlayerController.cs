@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
     Animator animator;
     Rigidbody2D rb2D;
     SpriteRenderer spriteRenderer;
@@ -30,8 +31,8 @@ public class PlayerController : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
-
         reloaderTimer = reloadTime;
+
     }
 
     // Update is called once per frame
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Look Y", lookDirection.y);
         animator.SetFloat("Speed", move.magnitude);
 
+        //reload timer
         if (reloading)
         {
             reloaderTimer -= Time.deltaTime;
@@ -66,6 +68,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        //attack key
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             Attack();
@@ -87,6 +90,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
+        //if player is reloading dont do anything
         if (reloading)
             return;
 
@@ -96,8 +100,7 @@ public class PlayerController : MonoBehaviour
         GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position, Quaternion.identity);
         //get the compoents of the projectile
         Projectile projectile = projectileObject.GetComponent<Projectile>();
-        Debug.Log(projectile.gameObject.name + "Created");
-
+        //Depending on where the player is looking, rotate the arrow that comes out
         if (lookDirection.x == 1)
         {
             projectile.transform.Rotate(0, 0, 180);
@@ -110,8 +113,10 @@ public class PlayerController : MonoBehaviour
         {
             projectile.transform.Rotate(0, 0, 90);
         }
+
         //launch the projectiles in the direciton the player is looking in for 300 newton force
         projectile.Launch(lookDirection, 300);
+        //when arrow is fired, set reload to true, and set reload timer to default
         reloading = true;
         reloaderTimer = reloadTime;
 

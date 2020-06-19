@@ -6,6 +6,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb2D;
+    public int projectileDamage = 2;
 
     // Start is called before the first frame update
     void Awake()
@@ -17,7 +18,7 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         //Destroys the projectile if they go too far away from the start position
-        if (transform.position.magnitude > 10.0f)
+        if (transform.position.magnitude > 100.0f)
         {
             Destroy(gameObject);
         }
@@ -34,6 +35,12 @@ public class Projectile : MonoBehaviour
     //if the projectile collides with something
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("Arrow Collidede with " + collision.gameObject.name);
+        EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+        if(enemy != null)
+        {
+            enemy.TakeDamage(projectileDamage);
+        }
         //destory the game objects after they collided
         Destroy(gameObject);
     }
