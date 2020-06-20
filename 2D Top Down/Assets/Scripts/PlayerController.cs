@@ -28,13 +28,16 @@ public class PlayerController : MonoBehaviour
     bool reloading;
     float reloaderTimer;
 
+    //reload time of skills
+    public float specialReloadTime = 5.0f;
+    bool specialReloading;
+    float specialReloadTimer;
+
     //invincible time of the player
     public float invincibleTime = 1.0f;
     public bool invincible;
     float invincibleTimer;
 
-    public float dashSpeed = 25f;
-    public bool dash;
     
 
     // Start is called before the first frame update
@@ -47,6 +50,7 @@ public class PlayerController : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
 
         reloaderTimer = reloadTime;
+        specialReloadTimer = specialReloadTime;
         invincibleTimer = invincibleTime;
     }
 
@@ -80,6 +84,16 @@ public class PlayerController : MonoBehaviour
             if (reloaderTimer < 0)
             {
                 reloading = false;
+            }
+        }
+
+        //special skill cooldown
+        if (specialReloading)
+        {
+            specialReloadTimer -= Time.deltaTime;
+            if(specialReloadTimer < 0)
+            {
+                specialReloading = false;
             }
         }
 
@@ -199,6 +213,8 @@ public class PlayerController : MonoBehaviour
 
     private void SpecialAttack()
     {
+        if (specialReloading)
+            return;
         //play the launch aniamtions
         animator.SetTrigger("Attack");
         //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
@@ -237,6 +253,8 @@ public class PlayerController : MonoBehaviour
 
         //launch the projectiles in the direciton the player is looking in for 300 newton force
         projectile.Launch(lookDirection, 500);
-        projectile.Launch(-lookDirection, 500);
+
+        specialReloadTimer = specialReloadTime;
+        specialReloading = true;
     }
 }

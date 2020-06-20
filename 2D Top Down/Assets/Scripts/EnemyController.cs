@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     public float changeTime = 6.0f;
     float directionTimer;
     public int direction = 1;
+    bool vertical;
 
     //daze time when enemy gets hit
     public float dazeTime = 0.75f;
@@ -30,7 +31,7 @@ public class EnemyController : MonoBehaviour
     //Attack range for the enemy sword
     public Transform attackPos;
     public LayerMask whatIsPlayer;
-    public float attackRange = 0.4f;
+    public float attackRange = 0.45f;
     public int damage = 5;
 
     //attack timer
@@ -40,8 +41,8 @@ public class EnemyController : MonoBehaviour
 
     //target and how far to stop from target
     private Transform target;
-    public float stoppingDistance = 0.75f;
-    public float lookingDistance = 5f;
+    public float stoppingDistance = 0.8f;
+    public float lookingDistance = 8f;
 
     public bool dead;
 
@@ -76,6 +77,7 @@ public class EnemyController : MonoBehaviour
             //change direciton and set timer back to default
             //direction = -direction;
             direction = -direction;
+            vertical = !vertical;
             directionTimer = changeTime;
         }
 
@@ -121,7 +123,10 @@ public class EnemyController : MonoBehaviour
         Vector2 position = transform.position;
 
         //sets the horizontal position of the player
-        position.x = position.x + Time.deltaTime * speed * direction;
+        if(!vertical)
+            position.x = position.x + Time.deltaTime * speed * direction;
+        else if(vertical)
+            position.y = position.y + Time.deltaTime * speed * direction;
         //sets the direction the player will be looking in
         animator.SetFloat("Look X", direction);
         animator.SetFloat("Look Y", 0);
@@ -169,6 +174,11 @@ public class EnemyController : MonoBehaviour
         {
             player.TakeDamage(-1);
         }
+        if(collision.gameObject.name == "Tilemap")
+        {
+            direction = -direction;
+        }
+        Debug.LogError(collision.gameObject.name);
     }
 
     //if player stays in enemy hitbox, they continue to take damage
@@ -185,25 +195,24 @@ public class EnemyController : MonoBehaviour
     //sphere collider to attack the enemy is they get into range
     private void AttackPlayer()
     {
-        
-            //sphere to detect player
-            Collider2D[] playerToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsPlayer);
-            for (int i = 0; i < playerToDamage.Length; i++)
-            {
-                //if enemy already attacked, dont do anything
-                if (attacked)
-                    return;
-                //set attack to true, set timer back to default and remove hp from player
-                attacked = true;
-                attackTimer = attackTime;
-                playerToDamage[i].GetComponent<PlayerController>().TakeDamage(-damage);
-                animator.SetTrigger("Attack");
+        //sphere to detect player
+        Collider2D[] playerToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsPlayer);
+        for (int i = 0; i < playerToDamage.Length; i++)
+        {
+            //if enemy already attacked, dont do anything
+            if (attacked)
+                return;
+            //set attack to true, set timer back to default and remove hp from player
+            attacked = true;
+            attackTimer = attackTime;
+            playerToDamage[i].GetComponent<PlayerController>().TakeDamage(-damage);
+            animator.SetTrigger("Attack");
 
-                //set speed of enemy to 0 and change bool to idle after attacking
-                speed = 0;
-                animator.SetBool("idle", true);
-                directionTimer = changeTime;
-            }
+            //set speed of enemy to 0 and change bool to idle after attacking
+            speed = 0;
+            animator.SetBool("idle", true);
+            directionTimer = changeTime;
+        }
         
     }
 
@@ -215,19 +224,40 @@ public class EnemyController : MonoBehaviour
 
     private void ChasePlayer()
     {
-        //change the direction of the attackRange for the skeleton
-        if (direction < 0)
+        //left attack range
+        if (target.position.x < transform.position.x)
         {
             attackPos.transform.position = transform.position + new Vector3(-0.291f, 0.083f, 0);
         }
-        else
+        //right attack range
+        else if (target.position.x > transform.position.x)
         {
             attackPos.transform.position = transform.position + new Vector3(0.291f, 0.083f, 0);
         }
-
+        //southwest attack range
+        if (target.position.x < transform.position.x && target.position.y < transform.position.y)
+        {
+            attackPos.transform.position = transform.position + new Vector3(-0.291f, -0.4f, 0);
+        }
+        //south east attack range
+        else if(target.position.x > transform.position.x && target.position.y < transform.position.y)
+        {
+            attackPos.transform.position = transform.position + new Vector3(0.291f, -0.4f, 0);
+        }
+        //northwest attack range
+        else if (target.position.x < transform.position.x && target.position.y > transform.position.y)
+        {
+            attackPos.transform.position = transform.position + new Vector3(-0.291f, 0.4f, 0);
+        }
+        //northeast attack range
+        else if (target.position.x > transform.position.x && target.position.y > transform.position.y)
+        {
+            attackPos.transform.position = transform.position + new Vector3(0.291f, 0.4f, 0);
+        }
         //if the target distance is less than 3
         if (Vector2.Distance(transform.position, target.position) < lookingDistance)
         {
+            directionTimer = changeTime;
             if (daze)
                 return;
             if (dead)
@@ -238,11 +268,16 @@ public class EnemyController : MonoBehaviour
             {
                 direction = -1;
                 animator.SetFloat("Look X", direction);
+
+            }
+            else if(target.position.x > transform.position.x)
+            {
+                direction = 1;
+                animator.SetFloat("Look X", direction);
             }
             //move towards the player
             transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
             //set direction timer back to default so enemy doesnt look back and forth
-            directionTimer = changeTime;
             //if distance is close enough to player, attack player 
             if (Vector2.Distance(transform.position, target.position) < stoppingDistance)
             {

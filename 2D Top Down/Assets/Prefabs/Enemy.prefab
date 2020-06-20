@@ -120,7 +120,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.013996601, y: -0.03499174}
+  m_Offset: {x: -0.023756683, y: -0.012218475}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -131,7 +131,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.7213602, y: 0.76248837}
+  m_Size: {x: 0.58471954, y: 0.71694183}
   m_EdgeRadius: 0
 --- !u!50 &2950822298388579128
 Rigidbody2D:
@@ -180,12 +180,12 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 1024
-  attackRange: 0.4
+  attackRange: 0.5
   damage: 5
   attackTime: 1
   attacked: 0
-  stoppingDistance: 0.75
-  lookingDistance: 5
+  stoppingDistance: 0.8
+  lookingDistance: 8
   dead: 0
 --- !u!1 &2950822298633252775
 GameObject:
