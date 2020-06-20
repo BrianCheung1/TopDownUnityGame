@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     float reloaderTimer;
 
     //reload time of skills
+    public bool tripleArrow;
     public float specialReloadTime = 5.0f;
     bool specialReloading;
     float specialReloadTimer;
@@ -136,6 +137,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
+      
         //if player is reloading dont do anything
         if (reloading)
             return;
@@ -213,48 +215,52 @@ public class PlayerController : MonoBehaviour
 
     private void SpecialAttack()
     {
-        if (specialReloading)
-            return;
-        //play the launch aniamtions
-        animator.SetTrigger("Attack");
-        //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
-        GameObject projectileObject = Instantiate(specialProjectilePrefab, rb2D.position, Quaternion.identity);
-        //get the compoents of the projectile
-        Projectile projectile = projectileObject.GetComponent<Projectile>();
-        //Depending on where the player is looking, rotate the arrow that comes out
-        if (lookDirection.x == 1 && lookDirection.y == 0)
+        if (tripleArrow)
         {
-            projectile.transform.Rotate(0, 0, 180);
-        }
-        else if (lookDirection.y == 1 && lookDirection.x == 0)
-        {
-            projectile.transform.Rotate(0, 0, -90);
-        }
-        else if (lookDirection.y == -1 && lookDirection.x == 0)
-        {
-            projectile.transform.Rotate(0, 0, 90);
-        }
-        else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y <= 1 && lookDirection.y > 0)
-        {
-            projectile.transform.Rotate(0, 0, -45);
-        }
-        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y <= 1 && lookDirection.y > 0)
-        {
-            projectile.transform.Rotate(0, 0, -135);
-        }
-        else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y >= -1 && lookDirection.y < 0)
-        {
-            projectile.transform.Rotate(0, 0, 45);
-        }
-        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y >= -1 && lookDirection.y < 0)
-        {
-            projectile.transform.Rotate(0, 0, 135);
-        }
+            if (specialReloading)
+                return;
+            //play the launch aniamtions
+            animator.SetTrigger("Attack");
+            //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
+            GameObject projectileObject = Instantiate(specialProjectilePrefab, rb2D.position, Quaternion.identity);
+            //get the compoents of the projectile
+            Projectile projectile = projectileObject.GetComponent<Projectile>();
+            //Depending on where the player is looking, rotate the arrow that comes out
+            if (lookDirection.x == 1 && lookDirection.y == 0)
+            {
+                projectile.transform.Rotate(0, 0, 180);
+            }
+            else if (lookDirection.y == 1 && lookDirection.x == 0)
+            {
+                projectile.transform.Rotate(0, 0, -90);
+            }
+            else if (lookDirection.y == -1 && lookDirection.x == 0)
+            {
+                projectile.transform.Rotate(0, 0, 90);
+            }
+            else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y <= 1 && lookDirection.y > 0)
+            {
+                projectile.transform.Rotate(0, 0, -45);
+            }
+            else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y <= 1 && lookDirection.y > 0)
+            {
+                projectile.transform.Rotate(0, 0, -135);
+            }
+            else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y >= -1 && lookDirection.y < 0)
+            {
+                projectile.transform.Rotate(0, 0, 45);
+            }
+            else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y >= -1 && lookDirection.y < 0)
+            {
+                projectile.transform.Rotate(0, 0, 135);
+            }
 
-        //launch the projectiles in the direciton the player is looking in for 300 newton force
-        projectile.Launch(lookDirection, 500);
+            //launch the projectiles in the direciton the player is looking in for 300 newton force
+            projectile.Launch(lookDirection, 500);
 
-        specialReloadTimer = specialReloadTime;
-        specialReloading = true;
+            specialReloadTimer = specialReloadTime;
+            specialReloading = true;
+        }
     }
+
 }
