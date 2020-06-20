@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class EnemyController : MonoBehaviour
 {
 
-    enum State { Walk, Hit, Death, Daze}
+    enum State { Walk, Hit, Death, Daze, Attack, Chase}
     private State state;
 
     //speed and direciton the enemy is moving in
@@ -13,10 +16,10 @@ public class EnemyController : MonoBehaviour
     public float speed;
     public float changeTime = 6.0f;
     float directionTimer;
-    int direction = 1;
+    public int direction = 1;
 
     //daze time when enemy gets hit
-    public float dazeTime = 3.0f;
+    public float dazeTime = 0.5f;
     float dazeTimer;
     bool daze;
 
@@ -38,6 +41,13 @@ public class EnemyController : MonoBehaviour
     float attackTimer;
     public bool attacked;
 
+    //target and how far to stop from target
+    private Transform target;
+    public float stoppingDistance = 0.75f;
+    public float lookingDistance = 5f;
+
+    public bool dead;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +63,10 @@ public class EnemyController : MonoBehaviour
         healthBar.SetMaxHealth(health);
         //Enemy starts in walking state
         state = State.Walk;
+
+        //set target to player
+        target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        
     }
 
     // Update is called once per frame
@@ -67,7 +81,6 @@ public class EnemyController : MonoBehaviour
                 //change direciton and set timer back to default
                 direction = -direction;
                 directionTimer = changeTime;
-                transform.Rotate(0, 180, 0);
             }
         }
 
@@ -89,6 +102,7 @@ public class EnemyController : MonoBehaviour
             }
         }
 
+
         //if enemy has already attacked
         if (attacked)
         {
@@ -100,17 +114,21 @@ public class EnemyController : MonoBehaviour
                 attacked = false;
                 speed = defaultSpeed;
                 animator.SetBool("idle", false);
+
             }
+
         }
 
         //always look to attack player
-        AttackPlayer();
+        ChasePlayer();
+        Debug.LogError(state);
     }
 
     private void FixedUpdate()
     {
         if (state == State.Walk)
         {
+            
             //gets the position the enemy is in at the moment
             Vector2 position = transform.position;
 
@@ -156,9 +174,7 @@ public class EnemyController : MonoBehaviour
             //if health is less than or equal to 0 play the death animation and set rigid body off
             if (health <= 0)
             {
-                animator.SetTrigger("Death");
-                rb2D.simulated = false;
-                healthBar.gameObject.SetActive(false);
+                Dead();
             }
             state = State.Daze;
         }
@@ -200,22 +216,27 @@ public class EnemyController : MonoBehaviour
     //sphere collider to attack the enemy is they get into range
     private void AttackPlayer()
     {
-        //sphere to detect player
-        Collider2D[] playerToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsPlayer);
-        for(int i = 0; i < playerToDamage.Length; i++)
+        state = State.Attack;
+        if (state == State.Attack)
         {
-            //if enemy already attacked, dont do anything
-            if (attacked)
-                return;
-            //set attack to true, set timer back to default and remove hp from player
-            attacked = true;
-            attackTimer = attackTime;
-            playerToDamage[i].GetComponent<PlayerController>().TakeDamage(-damage);
-            animator.SetTrigger("Attack");
-            //set speed of enemy to 0 and change bool to idle after attacking
-            speed = 0;
-            animator.SetBool("idle", true);
-            directionTimer = changeTime;
+            //sphere to detect player
+            Collider2D[] playerToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsPlayer);
+            for (int i = 0; i < playerToDamage.Length; i++)
+            {
+                //if enemy already attacked, dont do anything
+                if (attacked)
+                    return;
+                //set attack to true, set timer back to default and remove hp from player
+                attacked = true;
+                attackTimer = attackTime;
+                playerToDamage[i].GetComponent<PlayerController>().TakeDamage(-damage);
+                animator.SetTrigger("Attack");
+
+                //set speed of enemy to 0 and change bool to idle after attacking
+                speed = 0;
+                animator.SetBool("idle", true);
+                directionTimer = changeTime;
+            }
         }
     }
 
@@ -223,6 +244,65 @@ public class EnemyController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPos.position, attackRange);
+    }
+
+    private void ChasePlayer()
+    {
+        //change the direction of the attackRange for the skeleton
+        if (direction < 0)
+        {
+            attackPos.transform.position = transform.position + new Vector3(-0.291f, 0.083f, 0);
+        }
+        else
+        {
+            attackPos.transform.position = transform.position + new Vector3(0.291f, 0.083f, 0);
+        }
+
+        //if the target distance is less than 3
+        if (Vector2.Distance(transform.position, target.position) < lookingDistance)
+        {
+            if (daze)
+                return;
+            if (dead)
+                return;
+            state = State.Chase;
+            //set the aniamtions for chasing to the correct side
+            if (target.position.x < transform.position.x)
+            {
+                direction = -1;
+                animator.SetFloat("Look X", direction);
+            }
+            //move towards the player
+            transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+            //set direction timer back to default so enemy doesnt look back and forth
+            directionTimer = changeTime;
+            //if distance is close enough to player, attack player 
+            if (Vector2.Distance(transform.position, target.position) < stoppingDistance)
+            {
+                AttackPlayer();
+            }
+        }
+        else
+        {
+            if (daze)
+                state = State.Daze;
+            else
+                state = State.Walk;
+        }
+    }
+
+    //if enemy is dead, turn most of its componenets off
+    private void Dead()
+    {
+        state = State.Death;
+        if (state == State.Death)
+        {
+            dead = true;
+            speed = 0;
+            animator.SetTrigger("Death");
+            rb2D.simulated = false;
+            healthBar.gameObject.SetActive(false);
+        }
     }
 }
 
