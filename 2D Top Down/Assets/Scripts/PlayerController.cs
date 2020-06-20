@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -30,6 +31,8 @@ public class PlayerController : MonoBehaviour
     public float invincibleTime = 1.0f;
     public bool invincible;
     float invincibleTimer;
+
+    public bool dash;
     
 
     // Start is called before the first frame update
@@ -94,6 +97,12 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        //special dash
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            dash = true;
+        }
+
     }
 
     private void FixedUpdate()
@@ -106,6 +115,12 @@ public class PlayerController : MonoBehaviour
 
         //move the player to those positions
         rb2D.MovePosition(position);
+
+        if (dash == true)
+        {
+            rb2D.AddForce(transform.right * 5000);
+            dash = false;
+        }
     }
 
     private void Attack()

@@ -8,20 +8,17 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
 
-    enum State { Walk, Hit, Death, Daze, Attack, Chase}
-    private State state;
-
     //speed and direciton the enemy is moving in
     public float defaultSpeed = 1.0f;
-    public float speed;
+    public float speed = 1.0f;
     public float changeTime = 6.0f;
     float directionTimer;
     public int direction = 1;
 
     //daze time when enemy gets hit
-    public float dazeTime = 0.5f;
-    float dazeTimer;
-    bool daze;
+    public float dazeTime = 0.75f;
+    public float dazeTimer;
+    public bool daze;
 
     public HealthBar healthBar;
     public int maxHealth = 10;
@@ -33,8 +30,8 @@ public class EnemyController : MonoBehaviour
     //Attack range for the enemy sword
     public Transform attackPos;
     public LayerMask whatIsPlayer;
-    public float attackRange;
-    public int damage;
+    public float attackRange = 0.4f;
+    public int damage = 5;
 
     //attack timer
     public float attackTime = 1.0f;
@@ -62,7 +59,6 @@ public class EnemyController : MonoBehaviour
         health = maxHealth;
         healthBar.SetMaxHealth(health);
         //Enemy starts in walking state
-        state = State.Walk;
 
         //set target to player
         target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
@@ -72,8 +68,7 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (state == State.Walk)
-        {
+
             //timer for direction goes down
             directionTimer -= Time.deltaTime;
             if (directionTimer < 0)
@@ -82,25 +77,24 @@ public class EnemyController : MonoBehaviour
                 direction = -direction;
                 directionTimer = changeTime;
             }
-        }
 
-        if (state == State.Daze)
+
+
+        if (daze)
         {
+            //timer for daze goes down
+            dazeTimer -= Time.deltaTime;
 
-            if (daze)
+            if (dazeTimer < 0)
             {
-                //timer for daze goes down
-                dazeTimer -= Time.deltaTime;
-                if (dazeTimer < 0)
-                {
-                    //since daze is no longer in effect change daze to false, set speed back to normal, and go to walking state
-                    daze = false;
-                    speed = defaultSpeed;
-                    animator.SetBool("idle", false);
-                    state = State.Walk;
-                }
+                //since daze is no longer in effect change daze to false, set speed back to normal, and go to walking state
+                daze = false;
+                speed = defaultSpeed;
+                animator.SetBool("idle", false);
             }
         }
+            
+        
 
 
         //if enemy has already attacked
@@ -121,33 +115,27 @@ public class EnemyController : MonoBehaviour
 
         //always look to attack player
         ChasePlayer();
-        Debug.LogError(state);
     }
 
     private void FixedUpdate()
     {
-        if (state == State.Walk)
-        {
-            
-            //gets the position the enemy is in at the moment
-            Vector2 position = transform.position;
 
-            //sets the horizontal position of the player
-            position.x = position.x + Time.deltaTime * speed * direction;
-            //sets the direction the player will be looking in
-            animator.SetFloat("Look X", direction);
-            animator.SetFloat("Look Y", 0);
-            //moves the player to those position
-            rb2D.MovePosition(position);
-        }
+        //gets the position the enemy is in at the moment
+        Vector2 position = transform.position;
+
+        //sets the horizontal position of the player
+        position.x = position.x + Time.deltaTime * speed * direction;
+        //sets the direction the player will be looking in
+        animator.SetFloat("Look X", direction);
+        animator.SetFloat("Look Y", 0);
+        //moves the player to those position
+        rb2D.MovePosition(position);
+
     }
 
     public void TakeDamage(int damage)
     {
-        //since they take damange, set the state to being hit
-        state = State.Hit;
-
-        if (state == State.Hit)
+        if (damage < 0)
         {
             //set daze to true when hit
             daze = true;
@@ -155,40 +143,24 @@ public class EnemyController : MonoBehaviour
             dazeTimer = dazeTime;
             //play the hit animation
             animator.SetTrigger("Hit");
-            //if health is greater than 0 than remove hp
-            if (damage < 0)
-            {
-               
-                //set daze to true when hit
-                daze = true;
-                //set timer to default
-                dazeTimer = dazeTime;
-                //play the hit animation
-                animator.SetTrigger("Hit");
-            }
-            
-            //set the health and healthbar ui
-            health = Mathf.Clamp(health + damage, 0, maxHealth);
-            healthBar.setHealth(health);
-
-            //if health is less than or equal to 0 play the death animation and set rigid body off
-            if (health <= 0)
-            {
-                Dead();
-            }
-            state = State.Daze;
         }
 
-        if (state == State.Daze)
+        //if enemy is dazed, set their speed to 0 and play their idle animation
+        if (daze)
         {
-            if (daze)
-            {
-                //when dazed, set speed to 0 and play the dile animation
-                speed = 0;
-                animator.SetBool("idle", true);
-                
-            }
+            speed = 0;
+            animator.SetBool("idle", true);
         }
+        //set the health and healthbar ui
+        health = Mathf.Clamp(health + damage, 0, maxHealth);
+        healthBar.setHealth(health);
+
+        //if health is less than or equal to 0 play the death animation and set rigid body off
+        if (health <= 0)
+        {
+            Dead();
+        }
+
     }
 
     //if player touchs enemy, they take damange
@@ -216,9 +188,7 @@ public class EnemyController : MonoBehaviour
     //sphere collider to attack the enemy is they get into range
     private void AttackPlayer()
     {
-        state = State.Attack;
-        if (state == State.Attack)
-        {
+        
             //sphere to detect player
             Collider2D[] playerToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsPlayer);
             for (int i = 0; i < playerToDamage.Length; i++)
@@ -237,7 +207,7 @@ public class EnemyController : MonoBehaviour
                 animator.SetBool("idle", true);
                 directionTimer = changeTime;
             }
-        }
+        
     }
 
     private void OnDrawGizmosSelected()
@@ -265,7 +235,7 @@ public class EnemyController : MonoBehaviour
                 return;
             if (dead)
                 return;
-            state = State.Chase;
+            
             //set the aniamtions for chasing to the correct side
             if (target.position.x < transform.position.x)
             {
@@ -282,27 +252,19 @@ public class EnemyController : MonoBehaviour
                 AttackPlayer();
             }
         }
-        else
-        {
-            if (daze)
-                state = State.Daze;
-            else
-                state = State.Walk;
-        }
+ 
     }
 
     //if enemy is dead, turn most of its componenets off
     private void Dead()
     {
-        state = State.Death;
-        if (state == State.Death)
-        {
-            dead = true;
-            speed = 0;
-            animator.SetTrigger("Death");
-            rb2D.simulated = false;
-            healthBar.gameObject.SetActive(false);
-        }
+        //if enemy died, turn on most of their componenets
+        dead = true;
+        speed = 0;
+        animator.SetTrigger("Death");
+        rb2D.simulated = false;
+        healthBar.gameObject.SetActive(false);
+
     }
 }
 

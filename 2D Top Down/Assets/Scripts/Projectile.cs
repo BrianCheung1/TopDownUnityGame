@@ -35,7 +35,6 @@ public class Projectile : MonoBehaviour
     //if the projectile collides with something
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Arrow Collidede with " + collision.gameObject.name);
         EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
         if(enemy != null)
         {
