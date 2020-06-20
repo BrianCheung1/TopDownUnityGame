@@ -179,7 +179,7 @@ MonoBehaviour:
   attackPos: {fileID: 2950822299471509360}
   whatIsPlayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   attackRange: 0.4
   damage: 5
   attackTime: 1

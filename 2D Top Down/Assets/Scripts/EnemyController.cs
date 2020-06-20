@@ -69,15 +69,15 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
 
-            //timer for direction goes down
-            directionTimer -= Time.deltaTime;
-            if (directionTimer < 0)
-            {
-                //change direciton and set timer back to default
-                direction = -direction;
-                directionTimer = changeTime;
-            }
-
+        //timer for direction goes down
+        directionTimer -= Time.deltaTime;
+        if (directionTimer < 0)
+        {
+            //change direciton and set timer back to default
+            //direction = -direction;
+            direction = -direction;
+            directionTimer = changeTime;
+        }
 
 
         if (daze)
@@ -93,10 +93,7 @@ public class EnemyController : MonoBehaviour
                 animator.SetBool("idle", false);
             }
         }
-            
-        
-
-
+  
         //if enemy has already attacked
         if (attacked)
         {

@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     Rigidbody2D rb2D;
     public GameObject projectilePrefab;
+    public GameObject specialProjectilePrefab;
 
     //direction the player is looking for
     Vector2 lookDirection = new Vector2(0, -1);
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
     public bool invincible;
     float invincibleTimer;
 
+    public float dashSpeed = 25f;
     public bool dash;
     
 
@@ -100,7 +102,7 @@ public class PlayerController : MonoBehaviour
         //special dash
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            dash = true;
+            SpecialAttack();
         }
 
     }
@@ -116,11 +118,6 @@ public class PlayerController : MonoBehaviour
         //move the player to those positions
         rb2D.MovePosition(position);
 
-        if (dash == true)
-        {
-            rb2D.AddForce(transform.right * 5000);
-            dash = false;
-        }
     }
 
     private void Attack()
@@ -166,7 +163,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //launch the projectiles in the direciton the player is looking in for 300 newton force
-        projectile.Launch(lookDirection, 300);
+        projectile.Launch(lookDirection, 500);
         //when arrow is fired, set reload to true, and set reload timer to default
         reloading = true;
         reloaderTimer = reloadTime;
@@ -191,5 +188,55 @@ public class PlayerController : MonoBehaviour
         //set current health between 0, 100 depedning on the amount of damage taking
         currentHealth = Mathf.Clamp(currentHealth + damage, 0, maxHealth);
         healthBar.setHealth(currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            transform.position = new Vector2(-2.69f, -0.56f);
+            currentHealth = maxHealth;
+            healthBar.setHealth(currentHealth);
+        }
+    }
+
+    private void SpecialAttack()
+    {
+        //play the launch aniamtions
+        animator.SetTrigger("Attack");
+        //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
+        GameObject projectileObject = Instantiate(specialProjectilePrefab, rb2D.position, Quaternion.identity);
+        //get the compoents of the projectile
+        Projectile projectile = projectileObject.GetComponent<Projectile>();
+        //Depending on where the player is looking, rotate the arrow that comes out
+        if (lookDirection.x == 1 && lookDirection.y == 0)
+        {
+            projectile.transform.Rotate(0, 0, 180);
+        }
+        else if (lookDirection.y == 1 && lookDirection.x == 0)
+        {
+            projectile.transform.Rotate(0, 0, -90);
+        }
+        else if (lookDirection.y == -1 && lookDirection.x == 0)
+        {
+            projectile.transform.Rotate(0, 0, 90);
+        }
+        else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y <= 1 && lookDirection.y > 0)
+        {
+            projectile.transform.Rotate(0, 0, -45);
+        }
+        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y <= 1 && lookDirection.y > 0)
+        {
+            projectile.transform.Rotate(0, 0, -135);
+        }
+        else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y >= -1 && lookDirection.y < 0)
+        {
+            projectile.transform.Rotate(0, 0, 45);
+        }
+        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y >= -1 && lookDirection.y < 0)
+        {
+            projectile.transform.Rotate(0, 0, 135);
+        }
+
+        //launch the projectiles in the direciton the player is looking in for 300 newton force
+        projectile.Launch(lookDirection, 500);
+        projectile.Launch(-lookDirection, 500);
     }
 }
