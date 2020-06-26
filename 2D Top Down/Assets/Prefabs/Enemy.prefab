@@ -181,7 +181,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   attackRange: 0.5
-  damage: 5
+  damage: 20
   attackTime: 1
   attacked: 0
   stoppingDistance: 0.8

@@ -140,8 +140,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 0}
+  specialProjectilePrefab: {fileID: 0}
+  healthBar: {fileID: 0}
   maxHealth: 100
+  currentHealth: 0
   speed: 3
+  reloadTime: 1
+  tripleArrow: 0
+  specialReloadTime: 5
+  invincibleTime: 1
+  invincible: 0
 --- !u!61 &3614877378293991443
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -159,7 +167,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.7083333, y: 1.1666666}
+    oldSize: {x: 0.53125, y: 0.875}
     newSize: {x: 0.7083333, y: 1.1666666}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

@@ -36,11 +36,19 @@ public class Projectile : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+        RangedEnemyController rangedEnemy = collision.gameObject.GetComponent<RangedEnemyController>();
         if(enemy != null)
         {
             enemy.TakeDamage(-projectileDamage);
+
         }
+        if(rangedEnemy != null)
+        {
+            rangedEnemy.TakeDamage(-projectileDamage);
+        }
+
         //destory the game objects after they collided
         Destroy(gameObject);
     }
 }
+

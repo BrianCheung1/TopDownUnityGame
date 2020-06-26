@@ -59,7 +59,6 @@ public class EnemyController : MonoBehaviour
         //health of enemy character
         health = maxHealth;
         healthBar.SetMaxHealth(health);
-        //Enemy starts in walking state
 
         //set target to player
         target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
@@ -172,7 +171,7 @@ public class EnemyController : MonoBehaviour
 
         if(player != null)
         {
-            player.TakeDamage(-1);
+            player.TakeDamage(-5);
         }
         if(collision.gameObject.name == "Tilemap")
         {
@@ -188,7 +187,7 @@ public class EnemyController : MonoBehaviour
 
         if(player !=null)
         {
-            player.TakeDamage(-2);
+            player.TakeDamage(-10);
         }
     }
     
