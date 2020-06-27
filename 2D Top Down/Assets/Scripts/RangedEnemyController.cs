@@ -46,6 +46,7 @@ public class RangedEnemyController : MonoBehaviour
     public bool dead;
 
     public GameObject projectilePrefab;
+    public GameObject blood;
 
     // Start is called before the first frame update
     void Start()
@@ -139,6 +140,8 @@ public class RangedEnemyController : MonoBehaviour
     {
         if (damage < 0)
         {
+            //spawns blood when hit
+            Instantiate(blood, rb2D.position, Quaternion.identity);
             //set daze to true when hit
             daze = true;
             //set timer to default
@@ -192,7 +195,6 @@ public class RangedEnemyController : MonoBehaviour
         }
     }
     
-    //sphere collider to attack the enemy is they get into range
     private void AttackPlayer()
     {
         //if enemy already attacked, dont do anything
@@ -205,10 +207,10 @@ public class RangedEnemyController : MonoBehaviour
         GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position, Quaternion.identity);
         //get the compoents of the projectile
         EnemyProjectile projectile = projectileObject.GetComponent<EnemyProjectile>();
-        
+        //attack direction is the player
         Vector2 attackDireciton = (target.transform.position - transform.position).normalized;
         projectile.Launch(attackDireciton, 200);
-
+        //once attacked set speed to 0 and idle animation
         speed = 0;
         animator.SetBool("idle", true);
         directionTimer = changeTime;

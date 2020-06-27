@@ -11,12 +11,14 @@ public class TreasureChest : MonoBehaviour
 
     string[] powerUps = { "Triple Arrow"};
 
+    //set dialouge to false
     void Start()
     {
         dialogBox.SetActive(false);
         timerDisplay = -1.0f;
     }
 
+    //timer for chest dialouge
     void Update()
     {
         if (timerDisplay >= 0)
@@ -29,6 +31,7 @@ public class TreasureChest : MonoBehaviour
         }
     }
 
+    //displays chest dialog
     public void DisplayDialog()
     {
         dialogBox.SetActive(true);

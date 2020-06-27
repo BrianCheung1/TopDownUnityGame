@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
@@ -124,6 +125,7 @@ public class PlayerController : MonoBehaviour
             SpecialAttack();
         }
 
+        //chest dialouge
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
             RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
@@ -136,6 +138,12 @@ public class PlayerController : MonoBehaviour
                         chest.DisplayDialog();
                     }
             }
+        }
+
+        //reloads the scene
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene("SampleScene");
         }
     }
 

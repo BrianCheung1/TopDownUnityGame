@@ -140,7 +140,8 @@ public class EnemyController : MonoBehaviour
     {
         if (damage < 0)
         {
-            Instantiate(blood, transform.position, Quaternion.identity);
+            //spawns blood when hit
+            Instantiate(blood, rb2D.position, Quaternion.identity);
             //set daze to true when hit
             daze = true;
             //set timer to default
