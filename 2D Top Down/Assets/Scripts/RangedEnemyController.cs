@@ -144,7 +144,7 @@ public class RangedEnemyController : MonoBehaviour
             //set timer to default
             dazeTimer = dazeTime;
             //play the hit animation
-            animator.SetTrigger("Hit");
+            animator.SetTrigger("hit");
         }
 
         //if enemy is dazed, set their speed to 0 and play their idle animation
@@ -205,7 +205,7 @@ public class RangedEnemyController : MonoBehaviour
         GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position, Quaternion.identity);
         //get the compoents of the projectile
         EnemyProjectile projectile = projectileObject.GetComponent<EnemyProjectile>();
-
+        
         Vector2 attackDireciton = (target.transform.position - transform.position).normalized;
         projectile.Launch(attackDireciton, 200);
 
@@ -261,7 +261,7 @@ public class RangedEnemyController : MonoBehaviour
         animator.SetTrigger("Death");
         rb2D.simulated = false;
         healthBar.gameObject.SetActive(false);
-        Destroy(gameObject);
+
     }
 }
 

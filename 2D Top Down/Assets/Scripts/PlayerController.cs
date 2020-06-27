@@ -149,34 +149,8 @@ public class PlayerController : MonoBehaviour
         //get the compoents of the projectile
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         //Depending on where the player is looking, rotate the arrow that comes out
-        if (lookDirection.x == 1 && lookDirection.y == 0)
-        {
-            projectile.transform.Rotate(0, 0, 180);
-        }
-        else if (lookDirection.y == 1 && lookDirection.x == 0)
-        {
-            projectile.transform.Rotate(0, 0, -90);
-        }
-        else if (lookDirection.y == -1 && lookDirection.x == 0)
-        {
-            projectile.transform.Rotate(0, 0, 90);
-        }
-        else if(lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y <= 1 && lookDirection.y > 0)
-        {
-            projectile.transform.Rotate(0, 0, -45);
-        }
-        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y <= 1 && lookDirection.y > 0)
-        {
-            projectile.transform.Rotate(0, 0, -135);
-        }
-        else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y >= -1 && lookDirection.y < 0)
-        {
-            projectile.transform.Rotate(0, 0, 45);
-        }
-        else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y >= -1 && lookDirection.y < 0)
-        {
-            projectile.transform.Rotate(0, 0, 135);
-        }
+       
+        projectile.transform.Rotate(0.0f, 0.0f, Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg);
 
         //launch the projectiles in the direciton the player is looking in for 300 newton force
         projectile.Launch(lookDirection, 500);
@@ -226,34 +200,7 @@ public class PlayerController : MonoBehaviour
             //get the compoents of the projectile
             Projectile projectile = projectileObject.GetComponent<Projectile>();
             //Depending on where the player is looking, rotate the arrow that comes out
-            if (lookDirection.x == 1 && lookDirection.y == 0)
-            {
-                projectile.transform.Rotate(0, 0, 180);
-            }
-            else if (lookDirection.y == 1 && lookDirection.x == 0)
-            {
-                projectile.transform.Rotate(0, 0, -90);
-            }
-            else if (lookDirection.y == -1 && lookDirection.x == 0)
-            {
-                projectile.transform.Rotate(0, 0, 90);
-            }
-            else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y <= 1 && lookDirection.y > 0)
-            {
-                projectile.transform.Rotate(0, 0, -45);
-            }
-            else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y <= 1 && lookDirection.y > 0)
-            {
-                projectile.transform.Rotate(0, 0, -135);
-            }
-            else if (lookDirection.x >= -1 && lookDirection.x < 0 && lookDirection.y >= -1 && lookDirection.y < 0)
-            {
-                projectile.transform.Rotate(0, 0, 45);
-            }
-            else if (lookDirection.x <= 1 && lookDirection.x > 0 && lookDirection.y >= -1 && lookDirection.y < 0)
-            {
-                projectile.transform.Rotate(0, 0, 135);
-            }
+            projectile.transform.Rotate(0.0f, 0.0f, Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg);
 
             //launch the projectiles in the direciton the player is looking in for 300 newton force
             projectile.Launch(lookDirection, 500);
