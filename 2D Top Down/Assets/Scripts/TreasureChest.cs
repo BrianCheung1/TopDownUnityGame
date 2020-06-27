@@ -5,7 +5,36 @@ using UnityEngine;
 
 public class TreasureChest : MonoBehaviour
 {
+    public float displayTime = 4.0f;
+    public GameObject dialogBox;
+    float timerDisplay;
+
     string[] powerUps = { "Triple Arrow"};
+
+    void Start()
+    {
+        dialogBox.SetActive(false);
+        timerDisplay = -1.0f;
+    }
+
+    void Update()
+    {
+        if (timerDisplay >= 0)
+        {
+            timerDisplay -= Time.deltaTime;
+            if (timerDisplay < 0)
+            {
+                dialogBox.SetActive(false);
+            }
+        }
+    }
+
+    public void DisplayDialog()
+    {
+        dialogBox.SetActive(true);
+        timerDisplay = displayTime;
+    }
+
     public string randomPowerUp()
     {
         int index = Random.Range(0, powerUps.Length);
@@ -25,6 +54,6 @@ public class TreasureChest : MonoBehaviour
                 player.tripleArrow = true;
             }
         }
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -44,6 +46,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+
         rb2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
@@ -120,6 +124,19 @@ public class PlayerController : MonoBehaviour
             SpecialAttack();
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
+            if (hit.collider != null)
+            {
+                    TreasureChest chest = hit.collider.GetComponent<TreasureChest>();
+                    if (chest != null)
+                    {
+                        Debug.LogError("test");
+                        chest.DisplayDialog();
+                    }
+            }
+        }
     }
 
     private void FixedUpdate()

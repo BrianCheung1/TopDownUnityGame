@@ -46,6 +46,8 @@ public class EnemyController : MonoBehaviour
 
     public bool dead;
 
+    public GameObject blood;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -138,6 +140,7 @@ public class EnemyController : MonoBehaviour
     {
         if (damage < 0)
         {
+            Instantiate(blood, transform.position, Quaternion.identity);
             //set daze to true when hit
             daze = true;
             //set timer to default
@@ -177,7 +180,7 @@ public class EnemyController : MonoBehaviour
         {
             direction = -direction;
         }
-        Debug.LogError(collision.gameObject.name);
+       
     }
 
     //if player stays in enemy hitbox, they continue to take damage
