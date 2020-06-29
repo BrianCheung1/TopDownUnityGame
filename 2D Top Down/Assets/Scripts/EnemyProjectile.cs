@@ -42,6 +42,7 @@ public class EnemyProjectile : MonoBehaviour
         {
             player.TakeDamage(-projectileDamage);
         }
+        Debug.LogError(collision.gameObject.name);
         //destory the game objects after they collided
         Destroy(gameObject);
     }

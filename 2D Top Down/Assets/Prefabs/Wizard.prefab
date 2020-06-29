@@ -460,6 +460,7 @@ MonoBehaviour:
   dead: 0
   projectilePrefab: {fileID: 2751892538825744212, guid: 2847d51a141894c44a2b3f3e591b1386,
     type: 3}
+  blood: {fileID: 4656775383152562924, guid: c51a64eaa3e866148a4815da634b56b7, type: 3}
 --- !u!61 &792852077089969776
 BoxCollider2D:
   m_ObjectHideFlags: 0

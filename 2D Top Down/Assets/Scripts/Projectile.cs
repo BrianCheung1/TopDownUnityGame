@@ -37,6 +37,7 @@ public class Projectile : MonoBehaviour
     {
         EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
         RangedEnemyController rangedEnemy = collision.gameObject.GetComponent<RangedEnemyController>();
+        BossController boss = collision.gameObject.GetComponent<BossController>();
         if(enemy != null)
         {
             enemy.TakeDamage(-projectileDamage);
@@ -45,6 +46,10 @@ public class Projectile : MonoBehaviour
         if(rangedEnemy != null)
         {
             rangedEnemy.TakeDamage(-projectileDamage);
+        }
+        if(boss != null)
+        {
+            boss.TakeDamage(-projectileDamage);
         }
 
         //destory the game objects after they collided
