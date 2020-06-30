@@ -45,7 +45,9 @@ public class RangedEnemyController : MonoBehaviour
 
     public bool dead;
 
+    //objects enemy fires out
     public GameObject projectilePrefab;
+    //creates blood splatters on hit
     public GameObject blood;
 
     // Start is called before the first frame update

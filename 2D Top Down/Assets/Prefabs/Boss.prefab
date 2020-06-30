@@ -147,10 +147,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whatIsPlayer:
     serializedVersion: 2
-    m_Bits: 0
-  damage: 5
+    m_Bits: 1024
+  damage: 25
   stoppingDistance: 0.8
-  lookingDistance: 7
+  lookingDistance: 15
   projectilePrefab: {fileID: 927225196282294030, guid: d706930a20d9654458cfd886119cbc4a,
     type: 3}
   blood: {fileID: 4656775383152562924, guid: c51a64eaa3e866148a4815da634b56b7, type: 3}

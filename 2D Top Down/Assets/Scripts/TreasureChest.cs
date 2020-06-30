@@ -38,6 +38,7 @@ public class TreasureChest : MonoBehaviour
         timerDisplay = displayTime;
     }
 
+    //provides a random powerup in the arrow
     public string randomPowerUp()
     {
         int index = Random.Range(0, powerUps.Length);
@@ -47,6 +48,7 @@ public class TreasureChest : MonoBehaviour
         return powerUps[index];
     }
 
+    //if player touches the chest, they get the powerup
     public void OnCollisionEnter2D(Collision2D collision)
     {
         PlayerController player = collision.gameObject.GetComponent<PlayerController>();

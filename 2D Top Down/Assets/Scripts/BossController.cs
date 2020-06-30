@@ -63,7 +63,7 @@ public class BossController : MonoBehaviour
     {
         if (Vector2.Distance(transform.position, target.position) < lookingDistance)
         {
-            Debug.Log("Player in sight");
+           
             AttackPlayer();
         }
     }
@@ -88,11 +88,11 @@ public class BossController : MonoBehaviour
 
             if(rotate == -45)
             {
-                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, 2, 0))).normalized;
+                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, 3f, 0))).normalized;
             }
             else if(rotate == -15)
             {
-                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, 1, 0))).normalized;
+                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, 1.5f, 0))).normalized;
             }
             else if(rotate == 0)
             {
@@ -100,11 +100,11 @@ public class BossController : MonoBehaviour
             }
             else if (rotate == 15)
             {
-                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, -1, 0))).normalized;
+                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, -1.5f, 0))).normalized;
             }
             else if(rotate == 45)
             {
-                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, -2, 0))).normalized;
+                attackDireciton = (target.transform.position - (transform.position + new Vector3(0, -3f, 0))).normalized;
             }
 
             projectile.Launch(attackDireciton, 200);

@@ -42,7 +42,11 @@ public class PlayerController : MonoBehaviour
     public bool invincible;
     float invincibleTimer;
 
-    
+    //key to doors
+    public bool hasKey = false;
+
+    //creates blood splatters on hit
+    public GameObject blood;
 
     // Start is called before the first frame update
     void Start()
@@ -63,9 +67,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (PauseMenu.isPaused)
+            return;
         //gets the inputs from the player
-        horizontal = Input.GetAxis("Horizontal");
-        vertical = Input.GetAxis("Vertical");
+        horizontal = Input.GetAxisRaw("Horizontal");
+        vertical = Input.GetAxisRaw("Vertical");
 
         //
         Vector2 move = new Vector2(horizontal, vertical);
@@ -76,6 +82,7 @@ public class PlayerController : MonoBehaviour
             //set their directions
             lookDirection.Set(move.x, move.y);
             lookDirection.Normalize();
+            //lookDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
         }
 
         //plays the animations in which the direciton the palyer is moving in
@@ -109,6 +116,17 @@ public class PlayerController : MonoBehaviour
             Attack();
         }
 
+        /*if (Input.GetMouseButtonDown(0))
+        {
+            GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position, Quaternion.identity);
+            //get the compoents of the projectile
+            Projectile projectile = projectileObject.GetComponent<Projectile>();
+            lookDirection = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+            projectile.transform.Rotate(0.0f, 0.0f, Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg);
+            //launch the projectiles in the direciton the player is looking in for 300 newton force
+            projectile.Launch(lookDirection, 500);
+        }*/
+
         //invincible timer
         if (invincible)
         {
@@ -134,7 +152,7 @@ public class PlayerController : MonoBehaviour
                     TreasureChest chest = hit.collider.GetComponent<TreasureChest>();
                     if (chest != null)
                     {
-                        Debug.LogError("test");
+                        
                         chest.DisplayDialog();
                     }
             }
@@ -192,12 +210,13 @@ public class PlayerController : MonoBehaviour
         {
             if (invincible)
                 return;
+            Instantiate(blood, rb2D.position, Quaternion.identity);
             //if they take damage set invincible to true
             invincible = true;
             //set the timer back to default
             invincibleTimer = invincibleTime;
             //play hit animation
-            animator.SetTrigger("Hit");
+            //animator.SetTrigger("Hit");
         }
 
         //set current health between 0, 100 depedning on the amount of damage taking
@@ -206,9 +225,7 @@ public class PlayerController : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            transform.position = new Vector2(-2.69f, -0.56f);
-            currentHealth = maxHealth;
-            healthBar.setHealth(currentHealth);
+            SceneManager.LoadScene("MainMenu");
         }
     }
 
@@ -235,4 +252,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool Haskey()
+    {
+        return hasKey;
+    }
 }

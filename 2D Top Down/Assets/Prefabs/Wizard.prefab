@@ -452,10 +452,10 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 1024
-  damage: 5
+  damage: 15
   attackTime: 3
   attacked: 0
-  stoppingDistance: 5
+  stoppingDistance: 7
   lookingDistance: 8
   dead: 0
   projectilePrefab: {fileID: 2751892538825744212, guid: 2847d51a141894c44a2b3f3e591b1386,
