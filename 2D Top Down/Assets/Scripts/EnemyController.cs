@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 
@@ -32,7 +33,7 @@ public class EnemyController : MonoBehaviour
     public Transform attackPos;
     public LayerMask whatIsPlayer;
     public float attackRange = 0.45f;
-    public int damage = 5;
+    public int damage = 20;
 
     //attack timer
     public float attackTime = 1.0f;
@@ -46,7 +47,12 @@ public class EnemyController : MonoBehaviour
 
     public bool dead;
 
+    //blood particles on hit
     public GameObject blood;
+
+    //damange popup on hit
+    public GameObject damagePopup;
+
 
     // Start is called before the first frame update
     void Start()
@@ -140,6 +146,10 @@ public class EnemyController : MonoBehaviour
     {
         if (damage < 0)
         {
+            //damange number on enemies when hit
+            damagePopup.transform.GetChild(0).GetComponent<TextMeshPro>().text = damage.ToString();
+            Instantiate(damagePopup, rb2D.position, Quaternion.identity);
+
             //spawns blood when hit
             Instantiate(blood, rb2D.position, Quaternion.identity);
             //set daze to true when hit

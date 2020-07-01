@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class BossController : MonoBehaviour
 {
@@ -25,6 +26,10 @@ public class BossController : MonoBehaviour
     public int health;
     public int maxHealth = 100;
     public HealthBar healthBar;
+
+    public GameObject damagePopup;
+
+    public GameObject victoryPanel;
 
     // Start is called before the first frame update
     void Start()
@@ -117,6 +122,8 @@ public class BossController : MonoBehaviour
     {
         if (damage < 0)
         {
+            damagePopup.transform.GetChild(0).GetComponent<TextMeshPro>().text = damage.ToString();
+            Instantiate(damagePopup, rb2D.position, Quaternion.identity);
             //spawns blood when hit
             Instantiate(blood, rb2D.position, Quaternion.identity);
             //play the hit animation
@@ -137,6 +144,6 @@ public class BossController : MonoBehaviour
 
     public void Dead()
     {
-
+        victoryPanel.SetActive(true);
     }
 }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using TMPro;
 
 
 public class RangedEnemyController : MonoBehaviour
@@ -49,6 +50,8 @@ public class RangedEnemyController : MonoBehaviour
     public GameObject projectilePrefab;
     //creates blood splatters on hit
     public GameObject blood;
+
+    public GameObject damagePopup;
 
     // Start is called before the first frame update
     void Start()
@@ -142,6 +145,8 @@ public class RangedEnemyController : MonoBehaviour
     {
         if (damage < 0)
         {
+            damagePopup.transform.GetChild(0).GetComponent<TextMeshPro>().text = damage.ToString();
+            Instantiate(damagePopup, rb2D.position, Quaternion.identity);
             //spawns blood when hit
             Instantiate(blood, rb2D.position, Quaternion.identity);
             //set daze to true when hit

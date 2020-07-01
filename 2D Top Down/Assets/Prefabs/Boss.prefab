@@ -159,6 +159,8 @@ MonoBehaviour:
   health: 0
   maxHealth: 100
   healthBar: {fileID: 1540517933658580750}
+  damagePopup: {fileID: 3288912724786048336, guid: e143507af8a085047a906b8586d9f96e,
+    type: 3}
 --- !u!1001 &8069489961725847079
 PrefabInstance:
   m_ObjectHideFlags: 0

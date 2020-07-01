@@ -5,17 +5,21 @@ using UnityEngine;
 
 public class TreasureChest : MonoBehaviour
 {
+
     public float displayTime = 4.0f;
     public GameObject dialogBox;
     float timerDisplay;
+    public Projectile projectile;
+    bool opened = false;
 
-    string[] powerUps = { "Triple Arrow"};
-
+    int projectileDamageUpgrade = 1;
+    
     //set dialouge to false
     void Start()
     {
         dialogBox.SetActive(false);
         timerDisplay = -1.0f;
+
     }
 
     //timer for chest dialouge
@@ -34,19 +38,15 @@ public class TreasureChest : MonoBehaviour
     //displays chest dialog
     public void DisplayDialog()
     {
-        dialogBox.SetActive(true);
-        timerDisplay = displayTime;
+        if (!opened)
+        {
+            dialogBox.SetActive(true);
+            timerDisplay = displayTime;
+            projectile.setDamage(projectileDamageUpgrade);
+            opened = true;
+        }
     }
 
-    //provides a random powerup in the arrow
-    public string randomPowerUp()
-    {
-        int index = Random.Range(0, powerUps.Length);
-        if(powerUps[index] == "Triple Arrow")
-
-        Debug.LogError(powerUps[index]);
-        return powerUps[index];
-    }
 
     //if player touches the chest, they get the powerup
     public void OnCollisionEnter2D(Collision2D collision)
@@ -54,11 +54,7 @@ public class TreasureChest : MonoBehaviour
         PlayerController player = collision.gameObject.GetComponent<PlayerController>();
         if(player != null)
         {
-            if(randomPowerUp() == "Triple Arrow")
-            {
-                player.tripleArrow = true;
-            }
+            
         }
-        //Destroy(gameObject);
     }
 }

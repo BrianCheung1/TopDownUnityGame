@@ -38,7 +38,7 @@ public class MenuButtonController : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Return))
             {
 				index = 0;
-				SceneManager.LoadScene("SampleScene");
+				SceneManager.LoadScene("Controls");
             }
 		}
 		if(index == 1)

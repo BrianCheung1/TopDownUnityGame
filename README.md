@@ -28,6 +28,7 @@ https://streamable.com/9ul43c
 Player attack and movement\
 Monster attack and chase\
 Traps\
-Treasure chests
+Treasure chests\
+Boss Battle
 
 

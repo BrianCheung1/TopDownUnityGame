@@ -188,6 +188,8 @@ MonoBehaviour:
   lookingDistance: 8
   dead: 0
   blood: {fileID: 4656775383152562924, guid: c51a64eaa3e866148a4815da634b56b7, type: 3}
+  damagePopup: {fileID: 3288912724786048336, guid: e143507af8a085047a906b8586d9f96e,
+    type: 3}
 --- !u!1 &2950822298633252775
 GameObject:
   m_ObjectHideFlags: 0

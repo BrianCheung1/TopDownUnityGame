@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb2D;
     public int projectileDamage = 2;
+    public int defaultProjectileDamage = 2;
 
     // Start is called before the first frame update
     void Awake()
@@ -54,6 +55,16 @@ public class Projectile : MonoBehaviour
 
         //destory the game objects after they collided
         Destroy(gameObject);
+    }
+
+    public void setDamage(int attack)
+    {
+        projectileDamage += attack;
+    }
+
+    public void defaultDamage()
+    {
+        projectileDamage = defaultProjectileDamage;
     }
 }
 

@@ -142,3 +142,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trapDamage: 10
+  triggerTime: 4
+  triggered: 1

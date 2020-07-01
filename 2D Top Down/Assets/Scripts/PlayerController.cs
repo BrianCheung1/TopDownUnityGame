@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
     public bool tripleArrow;
     public float specialReloadTime = 5.0f;
     bool specialReloading;
-    float specialReloadTimer;
+    public float specialReloadTimer;
 
     //invincible time of the player
     public float invincibleTime = 1.0f;
@@ -47,6 +47,10 @@ public class PlayerController : MonoBehaviour
 
     //creates blood splatters on hit
     public GameObject blood;
+
+    public GameObject damagePopup;
+
+    public GameObject deathPanel;
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +66,8 @@ public class PlayerController : MonoBehaviour
         reloaderTimer = reloadTime;
         specialReloadTimer = specialReloadTime;
         invincibleTimer = invincibleTime;
+
+        projectilePrefab.GetComponent<Projectile>().defaultDamage();
     }
 
     // Update is called once per frame
@@ -152,7 +158,6 @@ public class PlayerController : MonoBehaviour
                     TreasureChest chest = hit.collider.GetComponent<TreasureChest>();
                     if (chest != null)
                     {
-                        
                         chest.DisplayDialog();
                     }
             }
@@ -210,6 +215,11 @@ public class PlayerController : MonoBehaviour
         {
             if (invincible)
                 return;
+
+            damagePopup.transform.GetChild(0).GetComponent<TextMeshPro>().text = damage.ToString();
+            Instantiate(damagePopup, rb2D.position, Quaternion.identity);
+           
+
             Instantiate(blood, rb2D.position, Quaternion.identity);
             //if they take damage set invincible to true
             invincible = true;
@@ -225,7 +235,7 @@ public class PlayerController : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            SceneManager.LoadScene("MainMenu");
+            deathPanel.SetActive(true);
         }
     }
 
@@ -237,16 +247,46 @@ public class PlayerController : MonoBehaviour
                 return;
             //play the launch aniamtions
             animator.SetTrigger("Attack");
-            //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
-            GameObject projectileObject = Instantiate(specialProjectilePrefab, rb2D.position, Quaternion.identity);
-            //get the compoents of the projectile
-            Projectile projectile = projectileObject.GetComponent<Projectile>();
-            //Depending on where the player is looking, rotate the arrow that comes out
-            projectile.transform.Rotate(0.0f, 0.0f, Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg);
+            
+            for (int i = 0; i < 3; i++)
+            {
+                //creates the projectileObject a little above the character model, this ensure that projectile comes out of the hands rather than the feet
+                GameObject projectileObject = Instantiate(specialProjectilePrefab, rb2D.position, Quaternion.identity);
+                //get the compoents of the projectile
+                Projectile projectile = projectileObject.GetComponent<Projectile>();
+                //Depending on where the player is looking, rotate the arrow that comes out
+                projectile.transform.Rotate(0.0f, 0.0f, Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg);
+                if(i == 0)
+                {
+                    if(lookDirection.x >= 0 || lookDirection.x <= 0)
+                    {
+                        projectile.transform.position = new Vector3(transform.position.x, transform.position.y + 0.1f, 0);
+                    }
+                    if (lookDirection.y == 1 || lookDirection.y == -1)
+                    {
+                        projectile.transform.position = new Vector3(transform.position.x + 0.1f, transform.position.y, 0);
+                    }
+                    
+                }
+                if (i == 1)
+                {
+                    if (lookDirection.x >= 0 || lookDirection.x <= 0)
+                    {
+                        projectile.transform.position = new Vector3(transform.position.x, transform.position.y - 0.1f, 0);
+                    }
+                    if (lookDirection.y == 1 || lookDirection.y == -1)
+                    {
+                        projectile.transform.position = new Vector3(transform.position.x - 0.1f, transform.position.y, 0);
+                    }
+                }
+                if (i == 2)
+                {
+                    projectile.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+                }
 
-            //launch the projectiles in the direciton the player is looking in for 300 newton force
-            projectile.Launch(lookDirection, 500);
-
+                //launch the projectiles in the direciton the player is looking in for 300 newton force
+                projectile.Launch(lookDirection, 500);
+            }
             specialReloadTimer = specialReloadTime;
             specialReloading = true;
         }
@@ -256,4 +296,5 @@ public class PlayerController : MonoBehaviour
     {
         return hasKey;
     }
+
 }

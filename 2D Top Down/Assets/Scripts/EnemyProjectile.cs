@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyProjectile : MonoBehaviour
 {
     Rigidbody2D rb2D;
-    public int projectileDamage = 2;
+    public int projectileDamage = 15;
 
     // Start is called before the first frame update
     void Awake()
